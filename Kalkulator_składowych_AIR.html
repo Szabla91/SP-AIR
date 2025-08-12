@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kalkulator Składowania AIR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fff;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    .btn-back {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 8px 16px;
+      background-color: #be1e2d;
+      color: white;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      z-index: 1000;
+      border: none;
+    }
+    .btn-back:hover { background-color: #a31520; }
+
+    .page-content {
+      padding: 40px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #be1e2d;
+      border-bottom: 2px solid #be1e2d;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+      font-size: 2.3rem;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .section {
+      background-color: #fafbfc;
+      margin-bottom: 30px;
+      border: 1.5px solid #e5e5e5;
+      padding: 28px 24px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    /* Etykiety i pola wewnątrz .section */
+    .section label {
+      display: block;
+      margin-top: 10px;      /* mniejszy odstęp nad */
+      margin-bottom: 2px;    /* minimalny odstęp pod */
+      font-weight: 500;
+      color: #222;
+      text-align: left;
+    }
+    .section select,
+    .section input[type="date"],
+.section input[type="time"],
+    .section input[type="number"] {
+      display: block;
+      padding: 7px 12px;
+      border: 1.5px solid #ccc;
+      border-radius: 7px;
+      width: 100%;
+      max-width: 250px;
+      margin-top: 2px;       /* bardzo mały odstęp pod label */
+      margin-left: 0;
+      font-size: 1rem;
+      box-sizing: border-box;
+      font-family: inherit;
+      text-align: left;
+    }
+
+    /* Sekcja rodzaju przesyłki – jeszcze ciaśniej */
+    #shipment-type-container label {
+      margin-top: 6px !important;
+      margin-bottom: 2px;
+    }
+    #shipment-type-container select {
+      margin-top: 2px !important;
+    }
+    /* Startowo kontener ukryty (JS go pokaże) */
+    #shipment-type-container { display: none; }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 28px;
+      background-color: #be1e2d;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.04rem;
+      transition: background-color 0.22s;
+      letter-spacing: 0.03em;
+    }
+    button:hover { background-color: #a31520; }
+
+    #result_storage {
+      margin-top: 26px;
+      border-top: 1px solid #ddd;
+      padding-top: 18px;
+      color: #222;
+      font-size: 1.06rem;
+    }
+
+    @media (max-width: 700px) {
+      .page-content { padding: 15px; }
+      .section { padding: 16px 5px; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="https://bbats.sharepoint.com/:u:/r/sites/MLK/SitePages/AIR.aspx?csf=1&web=1&e=S9j1n1" class="btn-back">Powrót do ekranu głównego</a>
+
+<div class="page-content">
+  <h1>Kalkulator Składowania AIR</h1>
+
+  <div class="section">
+    <!-- Agent handlingowy -->
+    <label for="agent">Wybierz agenta handlingowego:</label>
+    <select id="agent">
+      <option value="">Wybierz agenta</option>
+      <option value="WAW LS">WAW LS</option>
+      <option value="WAW WELCOME">WAW WELCOME</option>
+      <option value="WAW SILVER">WAW SILVER</option>
+      <option value="KTW LS">KTW LS</option>
+      <option value="KTW SILVER">KTW SILVER</option>
+      <option value="LCJ WELCOME">LCJ WELCOME</option>
+      <option value="KRK WELCOME">KRK WELCOME</option>
+      <option value="GDN WELCOME">GDN WELCOME</option>
+      <option value="POZ WELCOME">POZ WELCOME</option>
+      <option value="WRO WROLOT">WRO WROLOT</option>
+    </select>
+
+    <!-- Rodzaj przesyłki (pokazywany po wyborze agenta ≠ UCS) -->
+    <div id="shipment-type-container">
+      <label for="shipment_type">Wybierz rodzaj przesyłki:</label>
+      <select id="shipment_type">
+        <option value="General Cargo">General Cargo</option>
+        <option value="DGR">DGR</option>
+        <option value="PER">PER</option>
+      </select>
+    </div>
+
+
+    <label for="wm" style="margin-top:10px;">Waga przesyłki:</label>
+    <input type="number" id="wm" min="0" step="0.01" placeholder="np. 1.00" />
+
+
+    <label for="unload_date">Data i godzina przyjęcia towaru na terminalu:</label>
+    <input type="date" id="unload_date" /> <input type="time" id="unload_time" />
+
+    <label for="pickup_date">Data i godzina odbioru towaru z magazynu:</label>
+    <input type="date" id="pickup_date" /> <input type="time" id="pickup_time" />
+
+
+    <button type="button" onclick="calculateRailStorage()">Oblicz koszty składowania</button>
+    <div id="result_storage"></div>
+  </div>
+</div>
+
+<script>
+/* =========================
+   1) POLITYKI / CENNIKI
+   ========================= */
+const policies = {
+  "WAW LS": {
+    "General Cargo": { mode: "daily", freeDays: 3, ignoreArrivalDay: true,  dailyRate: 0.54, minCost: 94,  currency: "PLN" },
+    "DGR":           { mode: "daily", freeDays: 2, ignoreArrivalDay: true,  dailyRate: 1.07, minCost: 134, currency: "PLN" },
+    "PER":           { mode: "daily", freeDays: 1, ignoreArrivalDay: true,  dailyRate: 1.07, minCost: 134, currency: "PLN" },
+  },
+
+  "WAW WELCOME": {
+    "General Cargo": { mode: "daily",   freeDays: 3,  ignoreArrivalDay: true, dailyRate: 0.48, minCost: 150, currency: "PLN" },
+    "DGR":           { mode: "hourly",  freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 250, currency: "PLN" },
+    "PER":           { mode: "hourly",  freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.29, minCost: 250, currency: "PLN" },
+  },
+
+  "WAW SILVER": {
+    "General Cargo": { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.50, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.80, minCost: 160, currency: "PLN" },
+    "PER":           { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.90, minCost: 160, currency: "PLN" },
+  },
+
+  "KTW LS": {
+    "General Cargo": { mode: "daily", freeDays: 3, ignoreArrivalDay: false, dailyRate: 0.44, minCost: 77,  currency: "PLN" },
+    "DGR":           { mode: "daily", freeDays: 2, ignoreArrivalDay: true,  dailyRate: 0.77, minCost: 120, currency: "PLN" },
+    "PER":           { mode: "daily", freeDays: 1, ignoreArrivalDay: true,  dailyRate: 0.77, minCost: 140, currency: "PLN" },
+  },
+
+  "KTW SILVER": {
+    "General Cargo": { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.40, minCost: 80,  currency: "PLN" },
+    "DGR":           { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.70, minCost: 140, currency: "PLN" },
+    "PER":           { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.80, minCost: 160, currency: "PLN" },
+  },
+
+  "LCJ WELCOME": {
+    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+  },
+
+  "KRK WELCOME": {
+    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+  },
+
+  "GDN WELCOME": {
+    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+  },
+
+  "POZ WELCOME": {
+    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+  },
+
+  "WRO WROLOT": {
+    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+  },
+};
+
+/* =========================
+   2) NARZĘDZIA
+   ========================= */
+function toDateTime(dateElId, timeElId) {
+  const d = document.getElementById(dateElId).value;
+  const t = document.getElementById(timeElId).value || "00:00";
+  return new Date(`${d}T${t}:00`);
+}
+
+function setDefaultDateTime() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const hh = String(today.getHours()).padStart(2, '0');
+  const mi = String(today.getMinutes()).padStart(2, '0');
+
+  const todayStr = `${yyyy}-${mm}-${dd}`;
+  const timeStr  = `${hh}:${mi}`;
+
+  const unloadDateEl = document.getElementById('unload_date');
+  const pickupDateEl = document.getElementById('pickup_date');
+  const unloadTimeEl = document.getElementById('unload_time');
+  const pickupTimeEl = document.getElementById('pickup_time');
+
+  if (unloadDateEl) unloadDateEl.value = todayStr;
+  if (pickupDateEl) pickupDateEl.value = todayStr;
+  if (unloadTimeEl) unloadTimeEl.value = timeStr;
+  if (pickupTimeEl) pickupTimeEl.value = timeStr;
+}
+window.onload = setDefaultDateTime;
+
+/* =========================
+   3) GŁÓWNA FUNKCJA
+   ========================= */
+function calculateRailStorage() {
+  const agent = document.getElementById('agent').value;
+  const type  = document.getElementById('shipment_type').value;
+  const wm    = parseFloat(document.getElementById('wm').value);
+
+  const resultBox = document.getElementById('result_storage');
+  resultBox.innerHTML = '';
+
+  // Walidacja
+  let errors = [];
+  if (!agent) errors.push('Proszę wybrać agenta handlingowego.');
+  if (!type)  errors.push('Proszę wybrać rodzaj przesyłki.');
+  if (!wm || wm <= 0) errors.push('Podaj wagę przesyłki większą od zera.');
+
+  const start = toDateTime('unload_date', 'unload_time');
+  const end   = toDateTime('pickup_date', 'pickup_time');
+  if (isNaN(start) || isNaN(end)) errors.push('Wprowadź poprawne daty oraz godziny.');
+  if (start && end && end < start) errors.push('Data/godzina odbioru nie może być wcześniejsza niż data/godzina przyjęcia.');
+
+  if (errors.length) {
+    resultBox.innerHTML = `<p style="color:red">${errors.join(' ')}</p>`;
+    return;
+  }
+
+  const policy = (policies[agent] || {})[type];
+  if (!policy) {
+    resultBox.innerHTML = `<p style="color:red">Brak cennika dla wybranego zestawu.</p>`;
+    return;
+  }
+
+  let totalCost = 0;
+  let outputHTML = '';
+
+  /* ---- TRYB DNIOWY ---- */
+  if (policy.mode === 'daily') {
+    const startDateOnly = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const endDateOnly   = new Date(end.getFullYear(),   end.getMonth(),   end.getDate());
+    const msPerDay = 24*60*60*1000;
+
+    // różnica dni (dni kalendarzowe minęły między datami)
+    const storageDays = Math.floor((endDateOnly - startDateOnly) / msPerDay);
+
+    // zakres wolny: zaczyna się OD DNIA PO PRZYLOCIE, jeśli ignoreArrivalDay = true
+    const freeDays = policy.freeDays || 0;
+    const freeStartDate = new Date(startDateOnly);
+    if (policy.ignoreArrivalDay) freeStartDate.setDate(freeStartDate.getDate() + 1);
+    const freeEndDate = new Date(freeStartDate);
+    freeEndDate.setDate(freeEndDate.getDate() + Math.max(0, freeDays) - 1);
+
+    const freeInfo = `${freeDays} dni wolne ${policy.ignoreArrivalDay ? '(nie licząc dnia przylotu)' : ''} ` +
+                     `${freeDays > 0 ? `(${freeStartDate.toLocaleDateString('pl-PL')} - ${freeEndDate.toLocaleDateString('pl-PL')})` : ''}`;
+
+    const chargeDays = Math.max(0, storageDays - freeDays);
+    totalCost = chargeDays > 0 ? Math.max(policy.minCost, chargeDays * policy.dailyRate * wm) : 0;
+
+    // zakres przekroczenia
+    let exceededRange = '';
+    if (chargeDays > 0) {
+      const exceededStart = new Date(freeEndDate);
+      exceededStart.setDate(exceededStart.getDate() + 1);
+      exceededRange = `${exceededStart.toLocaleDateString('pl-PL')} - ${endDateOnly.toLocaleDateString('pl-PL')}`;
+    }
+
+    const rateLine = `${policy.dailyRate} ${policy.currency} / KG / dzień`;
+    outputHTML = `
+      <p><strong>Okres składowania:</strong> ${startDateOnly.toLocaleDateString('pl-PL')} – ${endDateOnly.toLocaleDateString('pl-PL')}</p>
+      <p><strong>Dni wolne:</strong> ${freeInfo}</p>
+      <p><strong>Przekroczone dni:</strong> ${chargeDays} ${chargeDays > 0 ? `(${exceededRange})` : ''}</p>
+      <p><strong>Stawka za dzień:</strong> ${rateLine}</p>
+      <p><strong>Minimalna stawka:</strong> ${policy.minCost} ${policy.currency}</p>
+      <p><strong><b>Łączny koszt:</b> <span style="color:#be1e2d;">${totalCost.toFixed(2)} ${policy.currency}</span></strong></p>
+    `;
+  }
+
+  /* ---- TRYB GODZINOWY ---- */
+  if (policy.mode === 'hourly') {
+    const totalHours = (end - start) / 3600000; // dokładne godziny
+    const freeHours  = policy.freeHours || 0;
+    const exceededHours = Math.max(0, totalHours - freeHours);
+
+    let chargeDays = 0;
+    let cost = 0;
+
+    if (policy.hourlyBilling === 'ceil') {
+      // np. SILVER – zaczyna się pełna doba po przekroczeniu
+      chargeDays = exceededHours > 0 ? Math.ceil(exceededHours / 24) : 0;
+      cost = chargeDays * policy.dailyRate * wm;
+    } else {
+      // rozliczanie proporcjonalne (WELCOME DGR/PER)
+      const dayFraction = exceededHours / 24;
+      cost = dayFraction * policy.dailyRate * wm;
+      chargeDays = exceededHours > 0 ? exceededHours / 24 : 0; // do informacji (nie zaokrąglamy)
+    }
+
+    totalCost = cost > 0 ? Math.max(cost, policy.minCost) : 0;
+
+    const freeInfo = `${freeHours} h wolne po przylocie`;
+    const rateLine = `${policy.dailyRate} ${policy.currency} / KG / dzień`;
+
+    outputHTML = `
+      <p><strong>Okres składowania:</strong> ${start.toLocaleString('pl-PL')} – ${end.toLocaleString('pl-PL')}</p>
+      <p><strong>Darmowe okno:</strong> ${freeInfo}</p>
+      <p><strong>Przekroczenie:</strong> ${exceededHours.toFixed(1)} h ${
+        policy.hourlyBilling === 'ceil' && exceededHours > 0 ? `(naliczone doby: ${Math.ceil(exceededHours/24)})` : ''
+      }</p>
+      <p><strong>Stawka dzienna:</strong> ${rateLine}</p>
+      <p><strong>Minimalna stawka:</strong> ${policy.minCost} ${policy.currency}</p>
+      <p><strong><b>Łączny koszt:</b> <span style="color:#be1e2d;">${totalCost.toFixed(2)} ${policy.currency}</span></strong></p>
+    `;
+  }
+
+  resultBox.innerHTML = outputHTML;
+}
+
+/* =========================
+   4) UI: Pokaż/ukryj wybór typu
+   ========================= */
+document.getElementById('agent').addEventListener('change', function() {
+  // zawsze pokazujemy wybór typu – różne stawki wg typu
+  const shipmentTypeSelect = document.getElementById('shipment_type');
+  // przy zmianie agenta ustaw domyślnie GC
+  if (shipmentTypeSelect) shipmentTypeSelect.value = 'General Cargo';
+});
+</script>
+
+
+</body>
+</html>
