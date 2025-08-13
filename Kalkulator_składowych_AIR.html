@@ -175,228 +175,207 @@
 </div>
 
 <script>
-/* =========================
-   1) POLITYKI / CENNIKI
-   ========================= */
-const policies = {
+/* ====== CENNIK ====== */
+const pricing = {
   "WAW LS": {
-    "General Cargo": { mode: "daily", freeDays: 3, ignoreArrivalDay: true,  dailyRate: 0.54, minCost: 94,  currency: "PLN" },
-    "DGR":           { mode: "daily", freeDays: 2, ignoreArrivalDay: true,  dailyRate: 1.07, minCost: 134, currency: "PLN" },
-    "PER":           { mode: "daily", freeDays: 1, ignoreArrivalDay: true,  dailyRate: 1.07, minCost: 134, currency: "PLN" },
+    "General Cargo": { mode: "days", freeDays: 3, arrivalExcluded: true, dailyRate: 0.54, minCost: 94,  currency: "PLN" },
+    "DGR":           { mode: "days", freeDays: 2, arrivalExcluded: true, dailyRate: 1.07, minCost: 134, currency: "PLN" },
+    "PER":           { mode: "days", freeDays: 1, arrivalExcluded: true, dailyRate: 1.07, minCost: 134, currency: "PLN" }
   },
-
   "WAW WELCOME": {
-    "General Cargo": { mode: "daily",   freeDays: 3,  ignoreArrivalDay: true, dailyRate: 0.48, minCost: 150, currency: "PLN" },
-    "DGR":           { mode: "hourly",  freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 250, currency: "PLN" },
-    "PER":           { mode: "hourly",  freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.29, minCost: 250, currency: "PLN" },
+    "General Cargo": { mode: "days",   freeDays: 3,  arrivalExcluded: true, dailyRate: 0.48, minCost: 150, currency: "PLN" },
+    "DGR":           { mode: "hours",  freeHours: 24,                 dailyRate: 1.07, minCost: 250, currency: "PLN", ceilDays: true },
+    "PER":           { mode: "hours",  freeHours: 24,                 dailyRate: 1.29, minCost: 250, currency: "PLN", ceilDays: true }
   },
-
   "WAW SILVER": {
-    "General Cargo": { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.50, minCost: 100, currency: "PLN" },
-    "DGR":           { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.80, minCost: 160, currency: "PLN" },
-    "PER":           { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.90, minCost: 160, currency: "PLN" },
+    "General Cargo": { mode: "hours", freeHours: 72, dailyRate: 0.50, minCost: 100, currency: "PLN", ceilDays: true },
+    "DGR":           { mode: "hours", freeHours: 72, dailyRate: 0.80, minCost: 160, currency: "PLN", ceilDays: true },
+    "PER":           { mode: "hours", freeHours: 72, dailyRate: 0.90, minCost: 160, currency: "PLN", ceilDays: true }
   },
-
   "KTW LS": {
-    "General Cargo": { mode: "daily", freeDays: 3, ignoreArrivalDay: false, dailyRate: 0.44, minCost: 77,  currency: "PLN" },
-    "DGR":           { mode: "daily", freeDays: 2, ignoreArrivalDay: true,  dailyRate: 0.77, minCost: 120, currency: "PLN" },
-    "PER":           { mode: "daily", freeDays: 1, ignoreArrivalDay: true,  dailyRate: 0.77, minCost: 140, currency: "PLN" },
+    "General Cargo": { mode: "days", freeDays: 3, arrivalExcluded: false, dailyRate: 0.44, minCost: 77,  currency: "PLN" },
+    "DGR":           { mode: "days", freeDays: 2, arrivalExcluded: true,  dailyRate: 0.77, minCost: 120, currency: "PLN" },
+    "PER":           { mode: "days", freeDays: 1, arrivalExcluded: true,  dailyRate: 0.77, minCost: 140, currency: "PLN" }
   },
-
   "KTW SILVER": {
-    "General Cargo": { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.40, minCost: 80,  currency: "PLN" },
-    "DGR":           { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.70, minCost: 140, currency: "PLN" },
-    "PER":           { mode: "hourly", freeHours: 72, hourlyBilling: "ceil", dailyRate: 0.80, minCost: 160, currency: "PLN" },
+    "General Cargo": { mode: "hours", freeHours: 72, dailyRate: 0.40, minCost: 80,  currency: "PLN", ceilDays: true },
+    "DGR":           { mode: "hours", freeHours: 72, dailyRate: 0.70, minCost: 140, currency: "PLN", ceilDays: true },
+    "PER":           { mode: "hours", freeHours: 72, dailyRate: 0.80, minCost: 160, currency: "PLN", ceilDays: true }
   },
-
   "LCJ WELCOME": {
-    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
-    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
-    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "General Cargo": { mode: "days",  freeDays: 3, arrivalExcluded: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true },
+    "PER":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true }
   },
-
   "KRK WELCOME": {
-    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
-    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
-    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "General Cargo": { mode: "days",  freeDays: 3, arrivalExcluded: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true },
+    "PER":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true }
   },
-
   "GDN WELCOME": {
-    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
-    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
-    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "General Cargo": { mode: "days",  freeDays: 3, arrivalExcluded: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true },
+    "PER":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true }
   },
-
   "POZ WELCOME": {
-    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
-    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
-    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
+    "General Cargo": { mode: "days",  freeDays: 3, arrivalExcluded: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true },
+    "PER":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true }
   },
-
   "WRO WROLOT": {
-    "General Cargo": { mode: "daily",  freeDays: 3, ignoreArrivalDay: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
-    "DGR":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
-    "PER":           { mode: "hourly", freeHours: 24, hourlyBilling: "proportional", dailyRate: 1.07, minCost: 200, currency: "PLN" },
-  },
+    "General Cargo": { mode: "days",  freeDays: 3, arrivalExcluded: true, dailyRate: 0.43, minCost: 100, currency: "PLN" },
+    "DGR":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true },
+    "PER":           { mode: "hours", freeHours: 24,                 dailyRate: 1.07, minCost: 200, currency: "PLN", ceilDays: true }
+  }
 };
 
-/* =========================
-   2) NARZĘDZIA
-   ========================= */
-function toDateTime(dateElId, timeElId) {
-  const d = document.getElementById(dateElId).value;
-  const t = document.getElementById(timeElId).value || "00:00";
+/* ====== POMOCNICZE ====== */
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function parseDateTime(dateInputId, timeInputId) {
+  const d = document.getElementById(dateInputId).value;
+  const t = document.getElementById(timeInputId).value || "00:00";
   return new Date(`${d}T${t}:00`);
 }
 
-function setDefaultDateTime() {
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  const hh = String(today.getHours()).padStart(2, '0');
-  const mi = String(today.getMinutes()).padStart(2, '0');
-
-  const todayStr = `${yyyy}-${mm}-${dd}`;
-  const timeStr  = `${hh}:${mi}`;
-
-  const unloadDateEl = document.getElementById('unload_date');
-  const pickupDateEl = document.getElementById('pickup_date');
-  const unloadTimeEl = document.getElementById('unload_time');
-  const pickupTimeEl = document.getElementById('pickup_time');
-
-  if (unloadDateEl) unloadDateEl.value = todayStr;
-  if (pickupDateEl) pickupDateEl.value = todayStr;
-  if (unloadTimeEl) unloadTimeEl.value = timeStr;
-  if (pickupTimeEl) pickupTimeEl.value = timeStr;
+function endOfDay(dateObj) {
+  const d = new Date(dateObj);
+  d.setHours(23, 59, 59, 999);
+  return d;
 }
-window.onload = setDefaultDateTime;
 
-/* =========================
-   3) GŁÓWNA FUNKCJA
-   ========================= */
+function startOfNextDay(dateObj) {
+  const d = new Date(dateObj);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 1);
+  return d;
+}
+
+/* ====== GŁÓWNA FUNKCJA LICZENIA ====== */
 function calculateRailStorage() {
   const agent = document.getElementById('agent').value;
-  const type  = document.getElementById('shipment_type').value;
-  const wm    = parseFloat(document.getElementById('wm').value);
+  const shipmentType = document.getElementById('shipment_type').value;
+  const weight = parseFloat(document.getElementById('wm').value);
+  const start = parseDateTime('unload_date', 'unload_time');   // ARRIVAL (data+godzina)
+  const end   = parseDateTime('pickup_date', 'pickup_time');   // PICKUP  (data+godzina)
 
   const resultBox = document.getElementById('result_storage');
   resultBox.innerHTML = '';
 
-  // Walidacja
-  let errors = [];
-  if (!agent) errors.push('Proszę wybrać agenta handlingowego.');
-  if (!type)  errors.push('Proszę wybrać rodzaj przesyłki.');
-  if (!wm || wm <= 0) errors.push('Podaj wagę przesyłki większą od zera.');
-
-  const start = toDateTime('unload_date', 'unload_time');
-  const end   = toDateTime('pickup_date', 'pickup_time');
-  if (isNaN(start) || isNaN(end)) errors.push('Wprowadź poprawne daty oraz godziny.');
-  if (start && end && end < start) errors.push('Data/godzina odbioru nie może być wcześniejsza niż data/godzina przyjęcia.');
-
-  if (errors.length) {
-    resultBox.innerHTML = `<p style="color:red">${errors.join(' ')}</p>`;
+  // walidacje
+  let errs = [];
+  if (!agent) errs.push('Wybierz agenta handlingowego.');
+  if (!shipmentType) errs.push('Wybierz rodzaj przesyłki.');
+  if (!weight || weight <= 0) errs.push('Podaj wagę przesyłki większą od zera.');
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) errs.push('Wprowadź poprawne daty i godziny.');
+  if (start && end && end < start) errs.push('Data/godzina odbioru nie może być wcześniejsza niż przyjęcia.');
+  if (errs.length) {
+    resultBox.innerHTML = `<p style="color:red">${errs.join('<br>')}</p>`;
     return;
   }
 
-  const policy = (policies[agent] || {})[type];
+  const policy = pricing[agent]?.[shipmentType];
   if (!policy) {
-    resultBox.innerHTML = `<p style="color:red">Brak cennika dla wybranego zestawu.</p>`;
+    resultBox.innerHTML = `<p style="color:red">Brak cennika dla wybranego agenta i typu przesyłki.</p>`;
     return;
   }
 
-  let totalCost = 0;
-  let outputHTML = '';
+  let chargeDays = 0;
+  let freeInfo = '';
+  let detailLine = ''; // różne linie dla trybu „dni” vs „godzin”
+  let exceededLabel = ''; // „Przekroczone dni”/„Przekroczone godziny”
+  let exceededValue = 0;
 
-  /* ---- TRYB DNIOWY ---- */
-  if (policy.mode === 'daily') {
-    const startDateOnly = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-    const endDateOnly   = new Date(end.getFullYear(),   end.getMonth(),   end.getDate());
-    const msPerDay = 24*60*60*1000;
+  if (policy.mode === 'days') {
+    // Okno darmowe wg dni, z opcją pominięcia dnia przylotu
+    const freeStart = policy.arrivalExcluded ? startOfNextDay(start) : new Date(start);
+    const freeEnd = endOfDay(new Date(freeStart.getTime() + (policy.freeDays - 1) * DAY_MS));
+    freeInfo = `${policy.freeDays} ${policy.arrivalExcluded ? 'dni (nie licząc dnia przylotu)' : ''} (${freeStart.toLocaleDateString('pl-PL')} – ${freeEnd.toLocaleDateString('pl-PL')})`;
 
-    // różnica dni (dni kalendarzowe minęły między datami)
-    const storageDays = Math.floor((endDateOnly - startDateOnly) / msPerDay);
-
-    // zakres wolny: zaczyna się OD DNIA PO PRZYLOCIE, jeśli ignoreArrivalDay = true
-    const freeDays = policy.freeDays || 0;
-    const freeStartDate = new Date(startDateOnly);
-    if (policy.ignoreArrivalDay) freeStartDate.setDate(freeStartDate.getDate() + 1);
-    const freeEndDate = new Date(freeStartDate);
-    freeEndDate.setDate(freeEndDate.getDate() + Math.max(0, freeDays) - 1);
-
-    const freeInfo = `${freeDays} dni wolne ${policy.ignoreArrivalDay ? '(nie licząc dnia przylotu)' : ''} ` +
-                     `${freeDays > 0 ? `(${freeStartDate.toLocaleDateString('pl-PL')} - ${freeEndDate.toLocaleDateString('pl-PL')})` : ''}`;
-
-    const chargeDays = Math.max(0, storageDays - freeDays);
-    totalCost = chargeDays > 0 ? Math.max(policy.minCost, chargeDays * policy.dailyRate * wm) : 0;
-
-    // zakres przekroczenia
-    let exceededRange = '';
-    if (chargeDays > 0) {
-      const exceededStart = new Date(freeEndDate);
-      exceededStart.setDate(exceededStart.getDate() + 1);
-      exceededRange = `${exceededStart.toLocaleDateString('pl-PL')} - ${endDateOnly.toLocaleDateString('pl-PL')}`;
-    }
-
-    const rateLine = `${policy.dailyRate} ${policy.currency} / KG / dzień`;
-    outputHTML = `
-      <p><strong>Okres składowania:</strong> ${startDateOnly.toLocaleDateString('pl-PL')} – ${endDateOnly.toLocaleDateString('pl-PL')}</p>
-      <p><strong>Dni wolne:</strong> ${freeInfo}</p>
-      <p><strong>Przekroczone dni:</strong> ${chargeDays} ${chargeDays > 0 ? `(${exceededRange})` : ''}</p>
-      <p><strong>Stawka za dzień:</strong> ${rateLine}</p>
-      <p><strong>Minimalna stawka:</strong> ${policy.minCost} ${policy.currency}</p>
-      <p><strong><b>Łączny koszt:</b> <span style="color:#be1e2d;">${totalCost.toFixed(2)} ${policy.currency}</span></strong></p>
-    `;
-  }
-
-  /* ---- TRYB GODZINOWY ---- */
-  if (policy.mode === 'hourly') {
-    const totalHours = (end - start) / 3600000; // dokładne godziny
-    const freeHours  = policy.freeHours || 0;
-    const exceededHours = Math.max(0, totalHours - freeHours);
-
-    let chargeDays = 0;
-    let cost = 0;
-
-    if (policy.hourlyBilling === 'ceil') {
-      // np. SILVER – zaczyna się pełna doba po przekroczeniu
-      chargeDays = exceededHours > 0 ? Math.ceil(exceededHours / 24) : 0;
-      cost = chargeDays * policy.dailyRate * wm;
+    if (end > freeEnd) {
+      const diffMs = end - freeEnd;
+      const fullDays = Math.ceil(diffMs / DAY_MS);
+      chargeDays = Math.max(0, fullDays);
+      exceededLabel = 'Przekroczone dni';
+      exceededValue = chargeDays;
     } else {
-      // rozliczanie proporcjonalne (WELCOME DGR/PER)
-      const dayFraction = exceededHours / 24;
-      cost = dayFraction * policy.dailyRate * wm;
-      chargeDays = exceededHours > 0 ? exceededHours / 24 : 0; // do informacji (nie zaokrąglamy)
+      chargeDays = 0;
+      exceededLabel = 'Przekroczone dni';
+      exceededValue = 0;
     }
 
-    totalCost = cost > 0 ? Math.max(cost, policy.minCost) : 0;
+    detailLine = `<p><strong>${exceededLabel}:</strong> ${exceededValue}</p>`;
+  } else if (policy.mode === 'hours') {
+    // Okno darmowe wg godzin (WELCOME DGR/PER – 24h, SILVER – 72h).
+    const freeUntil = new Date(start.getTime() + policy.freeHours * 60 * 60 * 1000);
+    freeInfo = `${policy.freeHours}h (od ${start.toLocaleString('pl-PL')} do ${freeUntil.toLocaleString('pl-PL')})`;
 
-    const freeInfo = `${freeHours} h wolne po przylocie`;
-    const rateLine = `${policy.dailyRate} ${policy.currency} / KG / dzień`;
+    const exceededMs = Math.max(0, end - freeUntil);
+    const exceededHours = exceededMs / (60 * 60 * 1000);
+    exceededLabel = 'Przekroczone godziny';
+    exceededValue = exceededHours;
 
-    outputHTML = `
-      <p><strong>Okres składowania:</strong> ${start.toLocaleString('pl-PL')} – ${end.toLocaleString('pl-PL')}</p>
-      <p><strong>Darmowe okno:</strong> ${freeInfo}</p>
-      <p><strong>Przekroczenie:</strong> ${exceededHours.toFixed(1)} h ${
-        policy.hourlyBilling === 'ceil' && exceededHours > 0 ? `(naliczone doby: ${Math.ceil(exceededHours/24)})` : ''
-      }</p>
-      <p><strong>Stawka dzienna:</strong> ${rateLine}</p>
-      <p><strong>Minimalna stawka:</strong> ${policy.minCost} ${policy.currency}</p>
-      <p><strong><b>Łączny koszt:</b> <span style="color:#be1e2d;">${totalCost.toFixed(2)} ${policy.currency}</span></strong></p>
-    `;
+    // Naliczanie dób dziennych:
+    // - SILVER i wszystkie tryby „hours” -> zaokrąglenie w górę (ceilDays: true)
+    // - (gdyby był wariant proporcjonalny – zamiast ceil można by użyć Math.floor/Math.round)
+    const baseDays = exceededHours / 24;
+    chargeDays = exceededHours > 0 ? (policy.ceilDays ? Math.ceil(baseDays) : Math.floor(baseDays)) : 0;
+
+    detailLine = `<p><strong>${exceededLabel}:</strong> ${exceededHours.toFixed(1)} h ${exceededHours > 0 ? `(naliczone doby: ${chargeDays})` : ''}</p>`;
   }
 
-  resultBox.innerHTML = outputHTML;
+  // Koszt
+  let totalCost = chargeDays * policy.dailyRate * weight;
+  if (chargeDays > 0 && totalCost < policy.minCost) totalCost = policy.minCost;
+
+  // Prezentacja
+  resultBox.innerHTML = `
+    <p><strong>Okres składowania:</strong> ${start.toLocaleString('pl-PL')} – ${end.toLocaleString('pl-PL')}</p>
+    <p><strong>Okres wolny od opłat: </strong> ${freeInfo}</p>
+    ${detailLine}
+    <p><strong>Stawka dzienna:</strong> ${policy.dailyRate} ${policy.currency} / KG / dzień</p>
+    <p><strong>Minimalna stawka:</strong> ${policy.minCost} ${policy.currency}</p>
+    <p><strong><b>Łączny koszt:</b> <span style="color:#be1e2d;">${totalCost.toFixed(2)} ${policy.currency}</span></b></p>
+  `;
 }
 
-/* =========================
-   4) UI: Pokaż/ukryj wybór typu
-   ========================= */
-document.getElementById('agent').addEventListener('change', function() {
-  // zawsze pokazujemy wybór typu – różne stawki wg typu
-  const shipmentTypeSelect = document.getElementById('shipment_type');
-  // przy zmianie agenta ustaw domyślnie GC
-  if (shipmentTypeSelect) shipmentTypeSelect.value = 'General Cargo';
+/* ====== UI: POKAŻ/UKRYJ WYBÓR TYPU ====== */
+function handleAgentChange() {
+  const agent = document.getElementById('agent').value;
+  const box = document.getElementById('shipment-type-container');
+  const st  = document.getElementById('shipment_type');
+  if (agent) {
+    box.style.display = 'block';   // zawsze pokazuj po wyborze agenta
+    if (!st.value) st.value = 'General Cargo';
+  } else {
+    box.style.display = 'none';
+    st.value = '';
+  }
+}
+
+/* ====== DOMYŚLNA DATA+GODZINA ====== */
+function setDefaultDateTime() {
+  const today = new Date();
+  const dStr = today.toISOString().split('T')[0];
+  const hh = String(today.getHours()).padStart(2, '0');
+  const mm = String(today.getMinutes()).padStart(2, '0');
+
+  const unloadDate = document.getElementById('unload_date');
+  const unloadTime = document.getElementById('unload_time');
+  const pickupDate = document.getElementById('pickup_date');
+  const pickupTime = document.getElementById('pickup_time');
+
+  if (unloadDate && !unloadDate.value) unloadDate.value = dStr;
+  if (pickupDate && !pickupDate.value) pickupDate.value = dStr;
+  if (unloadTime && !unloadTime.value) unloadTime.value = `${hh}:${mm}`;
+  if (pickupTime && !pickupTime.value) pickupTime.value = `${hh}:${mm}`;
+}
+
+/* ====== LISTENERY ====== */
+document.getElementById('agent').addEventListener('change', handleAgentChange);
+document.addEventListener('DOMContentLoaded', () => {
+  setDefaultDateTime();
+  handleAgentChange(); // ustaw widoczność „rodzaju przesyłki” na starcie
 });
 </script>
 
